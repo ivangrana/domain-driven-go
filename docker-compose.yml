@@ -1,0 +1,26 @@
+version: "3"
+services:
+  mongo-db:
+    image: mongo:latest
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+  go-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-api
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/go-api
+    depends_on:
+      - mongo-db
+    environment:
+      MONGODB_URI: mongodb://root:example@mongo-db:27017/go-api?authSource=admin
+      MONGODB_DB: go-api
