@@ -14,6 +14,17 @@ type UserHandler struct {
 	userApp *application.UserApplication
 }
 
+
+func registerRoute(userHandler *UserHandler) *mux.Router {
+	r := mux.NewRouter()
+
+	// Register routes
+	r.HandleFunc("/users", userHandler.CreateUser).Methods("POST")
+	r.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")
+
+	return r
+}
+
 // NewUserHandler creates a new UserHandler.
 func NewUserHandler(userApp *application.UserApplication) *UserHandler {
 	return &UserHandler{userApp: userApp}
@@ -24,6 +35,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Name string `json:"name"`
 	}
+
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
