@@ -1,13 +1,13 @@
-FROM golang:1.16.3-alpine3.13 AS builder
+FROM golang:1.18-alpine AS builder
 
 WORKDIR /go-api
 
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
-COPY . .
+COPY src ./src
 
-RUN go build -o /go-api/go-api
+RUN go build -o /go-api/go-api src/cmd/main.go
 
 FROM alpine:3.13
 
